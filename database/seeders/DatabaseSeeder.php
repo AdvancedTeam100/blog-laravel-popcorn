@@ -17,5 +17,8 @@ class DatabaseSeeder extends Seeder
         // $ php artisan db:seed and it will run all the called classes: 
         $this->call(ArticlesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
+        $this->call(RolesTableSeeder::class);
+        $this->call(GroupTableSeeder::class);
+        $this->call(CategoryTableSeeder::class);
     }
 }

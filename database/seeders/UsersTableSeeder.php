@@ -23,21 +23,29 @@ class UsersTableSeeder extends Seeder
         // Let's make sure everyone has the same password and
         // let's hash it before the loop, or else our seeder
         // will be too slow.
-        $password = Hash::make('toptal');
 
         User::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.com',
-            'password' => $password,
+            'user_id' => 'Super Admin',
+            'password' => bcrypt('123456'),
+            'email' => 'popcorn@gmail.com',
+            'name' => 'Potter Amos',
+            'read_name' => 'Potter Amos',
+            'status' => '1',
+            'birthday' => '1990-01-01',
+            'phone_number' => '1234567890',
+            'memo' => 'My memo',
+            'phone_device' => 'android',
+            'ninetieth_life' => 90,
+            'work_life' => 40,
+            'die_life' => 80,
+            'healthy_life' => 70,
+            'average_life' => 75,
+            'common1_permission' => json_encode(['1', '2', '3', '4']),
+            'common2_permission' => json_encode(['1', '2', '3', '4']),
+            'mygroup_permission' => json_encode(['1', '2', '3', '4']),
+            'group_id' => '',
+            'role_id' => 1, // Assign the appropriate role ID
+            'email_verified_at' => now(),
         ]);
-
-        // And now let's generate a few dozen users for our app:
-        for ($i = 0; $i < 10; $i++) {
-            User::create([
-                'name' => $faker->name,
-                'email' => $faker->email,
-                'password' => $password,
-            ]);
-        }
     }
 }
