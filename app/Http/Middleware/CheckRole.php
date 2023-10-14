@@ -18,30 +18,40 @@ class CheckRole
     public function handle(Request $request, Closure $next, $role)
     {
 
-        //SuperAdmin
-        if($role == 1) {
-            if (auth()->user()->role_id == $role) {
-                return $next($request);
-            } else {
-                return response()->json([
-                    'message' => 'User unauthorized',
-                ], 401); 
+        if(auth()->user()) {
+            //SuperAdmin
+            if($role == 1) {
+                if (auth()->user()->role_id == $role) {
+                    // dd('dd');
+                    return $next($request);
+                } else {
+                    return response()->json([
+                        'message' => 'User unauthorized',
+                    ], 401); 
+                }
             }
-        }
-        //TeamLeader
-        else if($role == 2) { 
-            if (auth()->user()->role_id <= $role) {
-                return $next($request);
-            } else {
-                return response()->json([
-                    'message' => 'User unauthorized',
-                ], 401); 
+            //TeamLeader
+            else if($role == 2) { 
+                if (auth()->user()->role_id <= $role) {
+                    dd('dd');
+                    return $next($request);
+                } else {
+                    return response()->json([
+                        'message' => 'User unauthorized',
+                    ], 401); 
+                }
             }
+            //User 
+            else {
+                return $next($request);
+            }
+        } else {
+            
+            return response()->json([
+                'message' => 'User unauthorized',
+            ], 401); 
         }
-        //User 
-        else {
-            return $next($request);
-        }
+
 
 
     }

@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Either email or password is wrong.'], 401);
+            return response()->json(['error' => 'メールアドレスかパスワードが間違っています。'], 401);
         }
 
         return $this->createNewToken($token);
@@ -63,7 +63,7 @@ class AuthController extends Controller
                 ));
 
         return response()->json([
-            'message' => 'User successfully registered',
+            'message' => 'ユーザーが正常に登録されました',
             'user' => $user
         ], 201);
     }
@@ -77,7 +77,7 @@ class AuthController extends Controller
     public function logout() {
         auth()->logout();
 
-        return response()->json(['message' => 'User successfully signed out']);
+        return response()->json(['message' => 'ユーザーは正常にサインアウトしました']);
     }
 
     /**
@@ -95,7 +95,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        dd(auth()->user()->role_id);    
+        // dd(auth()->user()->role_id);    
         return response()->json(auth()->user());
     }
 

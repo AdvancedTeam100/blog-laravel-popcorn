@@ -39,6 +39,9 @@ Route::group([
         Route::post('admin/register_user', [App\Http\Controllers\AdminController::class, 'registerUser'])->name('admin.registeruser');
         Route::post('admin/update_user', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.updateuser');
         Route::post('admin/delete_user', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('admin.deleteuser');
+        Route::post('blog/create', [App\Http\Controllers\PostController::class, 'createBlog'])->name('blog.create');
+        Route::get('blog', [App\Http\Controllers\PostController::class, 'getAllBlogs'])->name('blog.index');
+
     });
     
     Route::group(['middleware' => 'role:2'], function () {
@@ -47,7 +50,7 @@ Route::group([
         Route::post('user/update_user', [App\Http\Controllers\UserController::class, 'updateUser'])->name('user.updateuser');
         Route::post('user/delete_user', [App\Http\Controllers\UserController::class, 'deleteUser'])->name('user.deleteuser');
     });
-    
+
     Route::group(['middleware' => 'role:3'], function () {
         // Routes accessible only to user
     });

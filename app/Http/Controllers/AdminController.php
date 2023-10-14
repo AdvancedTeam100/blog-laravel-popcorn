@@ -21,7 +21,7 @@ class AdminController extends Controller
     } 
 
     /**
-     * Get All Team Leaders
+     * すべてのチームリーダーを取得
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -31,7 +31,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Register new TeamLeader by SuperAdmin
+     * SuperAdmin による新しいチームリーダーの登録
      * 
      *  @return \Illuminate\Http\JsonResponse
      */
@@ -81,15 +81,15 @@ class AdminController extends Controller
                     ]
                 ));
         
-        //Register User by SuperAdmin
+
         return response()->json([
-            'message' => 'Team Leader successfully registered',
+            'message' => 'チームリーダーが登録されました',
             'user' => $user
         ], 201); 
     }
 
     /**
-     * Delete Users by SuperAdmin
+     * SuperAdminによるユーザーの削除
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -98,12 +98,12 @@ class AdminController extends Controller
         $user->delete();
 
         return response()->json([
-            'message' => 'Team Leader successfully deleted',
+            'message' => 'チームリーダーは正常に削除されました',
         ], 201); 
     } 
 
     /**
-     * Delete Users by SuperAdmin
+     * SuperAdmin によるユーザーの更新
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -143,16 +143,14 @@ class AdminController extends Controller
 
         $user->update($updatedData);
 
-        //Update Team Leader by SuperAdmin
-
         return response()->json([
-            'message' => 'Team Leader successfully Updated',
+            'message' => 'チームリーダーが正常に更新されました',
             'user' => $user
         ], 201); 
     }
 
         /**
-     * Get All User by TeamLeader
+     * チームリーダーごとにすべてのユーザーを取得
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -162,7 +160,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Register new User by SuperAdmin
+     * SuperAdminによる新規ユーザーの登録
      * 
      *  @return \Illuminate\Http\JsonResponse
      */
@@ -201,15 +199,14 @@ class AdminController extends Controller
                     ]
                 ));
         
-        //Register User by TeamLeader
         return response()->json([
-            'message' => 'User successfully registered',
+            'message' => 'ユーザーが正常に登録されました',
             'user' => $user
         ], 201); 
     }
 
     /**
-     * Delete User by SuperAdmin
+     * スーパー管理者によるユーザーの削除
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -218,12 +215,12 @@ class AdminController extends Controller
         $user->delete();
 
         return response()->json([
-            'message' => 'User successfully deleted',
+            'message' => 'ユーザーは正常に削除されました',
         ], 201); 
     } 
 
     /**
-     * Delete Users by SuperAdmin
+     * SuperAdminによるユーザーの削除
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -262,10 +259,9 @@ class AdminController extends Controller
 
         $user->update($updatedData);
 
-        //Update User by SuperAdmin
 
         return response()->json([
-            'message' => 'User successfully Updated',
+            'message' => 'ユーザーは正常に更新されました',
             'user' => $user
         ], 201); 
     }

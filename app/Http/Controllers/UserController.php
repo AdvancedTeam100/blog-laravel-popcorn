@@ -22,7 +22,7 @@ class UserController extends Controller
     } 
 
     /**
-     * Get All User in My Team.
+     * 私のチームのすべてのユーザーを取得します。
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -32,7 +32,7 @@ class UserController extends Controller
     }
 
     /**
-     * Register new user into MyTeam
+     * 新しいユーザーを MyTeam に登録する
      * 
      *  @return \Illuminate\Http\JsonResponse
      */
@@ -72,13 +72,13 @@ class UserController extends Controller
                 ));
         
         return response()->json([
-            'message' => 'User successfully registered',
+            'message' => 'ユーザーが正常に登録されました',
             'user' => $user
         ], 201); 
     }
 
     /**
-     * Delete User from MyTeam.
+     * MyTeam からユーザーを削除します。
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -87,17 +87,17 @@ class UserController extends Controller
         if($user->group_id == auth()->user()->group_id) {
             $user->delete();
             return response()->json([
-                'message' => 'User successfully deleted',
+                'message' => 'ユーザーは正常に削除されました',
             ], 201); 
         } else {
             return response()->json([
-                'error' => "This user is not in your team."
+                'error' => "このユーザーはあなたのチームに属していません。"
             ], 403);
         }
     } 
 
     /**
-     * Delete Users by SuperAdmin
+     * SuperAdminによるユーザーの削除
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -118,7 +118,7 @@ class UserController extends Controller
 
         if(auth()->user()->group_id != $user->group_id) {
             return response()->json([
-                'error' => "This user is not in your team."
+                'error' => "このユーザーはあなたのチームに属していません。"
             ], 403);
         }
 
@@ -143,7 +143,7 @@ class UserController extends Controller
         $user->update($updatedData);
 
         return response()->json([
-            'message' => 'User successfully Updated',
+            'message' => 'ユーザーは正常に更新されました',
             'user' => $user
         ], 201); 
     }
