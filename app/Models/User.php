@@ -36,7 +36,6 @@ class User extends Authenticatable implements JWTSubject
         'healthy_life',
         'average_life',
         'common1_permission',
-        'common2_permission',
         'mygroup_permission',
         'group_id',
         'role_id'

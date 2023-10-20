@@ -30,12 +30,12 @@ class AdminController extends Controller
         $leader = User::find($id);
 
         if (!$leader) {
-            return response()->json(['error' => 'グループリーダーが存在しない'], 404);
+            return response()->json(['message' => 'グループリーダーが存在しない'], 404);
         }
 
         if ($leader->role_id != '2') 
         {
-            return response()->json(['error' => 'このIDのユーザーはグループリーダーではありません。'], 400);
+            return response()->json(['message' => 'このIDのユーザーはグループリーダーではありません。'], 400);
         }
 
         return response()->json($leader);
@@ -101,7 +101,7 @@ class AdminController extends Controller
         $leader = User::find($id);
 
         if (!$leader) {
-            return response()->json(['error' => 'グループリーダーが存在しない'], 404);
+            return response()->json(['message' => 'グループリーダーが存在しない'], 404);
         }
 
         $leader->delete();
@@ -143,7 +143,7 @@ class AdminController extends Controller
         $leader = User::find($id);
 
         if (!$leader) {
-            return response()->json(['error' => 'グループリーダーが存在しない'], 404);
+            return response()->json(['message' => 'グループリーダーが存在しない'], 404);
         }
 
         $updatedData = $request->all();

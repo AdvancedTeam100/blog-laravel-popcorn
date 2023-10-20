@@ -25,7 +25,7 @@ class Authenticate extends Middleware
     //     }
 
     //     // Token generation failed, return an unauthorized response
-    //     return response()->json(['error' => 'Unauthorized'], 401);
+    //     return response()->json(['message' => 'Unauthorized'], 401);
     // }
 
     /**

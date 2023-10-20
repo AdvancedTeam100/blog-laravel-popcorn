@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Firebase\JWT\JWT;
 
 class AuthController extends Controller
 {
@@ -35,12 +36,16 @@ class AuthController extends Controller
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'メールアドレスかパスワードが間違っています。'], 401);
+            return response()->json(['message' => 'メールアドレスかパスワードが間違っています。'], 401);
         }
 
-        
-
-        return $this->createNewToken($token);
+        $credentials = [
+            'user_id' => auth()->user()->user_id,
+            'role_id' => auth()->user()->role_id,
+            'name' => auth()->user()->name
+        ];
+        $usertoken = JWT::encode($credentials, env("JWT_SECRET"), 'HS256');
+        return $this->createNewToken($token, $usertoken);
     }
 
     /**
@@ -88,17 +93,26 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
-        return $this->createNewToken(auth()->refresh());
+
+        $credentials = [
+            'user_id' => auth()->user()->user_id,
+            'role_id' => auth()->user()->role_id,
+            'name' => auth()->user()->name
+        ];
+        $usertoken = JWT::encode($credentials, env("JWT_SECRET"), 'HS256');
+
+        return $this->createNewToken(auth()->refresh(), $usertoken);
     }
 
-    /**
+    /** 
      * Get the authenticated User.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
         // dd(auth()->user()->role_id);    
-        return response()->json(auth()->user());
+        return response()->json(['user' => auth()->user()]);
+        // return response()->json(['message' => "sss"], 403);
     }
 
     /**
@@ -108,9 +122,10 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function createNewToken($token){
+    protected function createNewToken($token, $usertoken){
         return response()->json([
             'access_token' => $token,
+            'user_token' => $usertoken,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()

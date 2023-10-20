@@ -20,7 +20,11 @@ class UserController extends Controller
      */
     public function getUsers() 
     {
-        $users = User::where('group_id', auth()->user()->group_id)->get();
+        if(auth()->user()->role_id == 1) {
+            $users = User::all();
+        } else {
+            $users = User::where('group_id', auth()->user()->group_id)->get();
+        }
         return response()->json($users);
     }
 
@@ -35,7 +39,7 @@ class UserController extends Controller
         $user = User::find($id);
         
         if (!$user) {
-            return response()->json(['error' => 'ユーザーが存在しません'], 404);
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
         }
 
         return response()->json($user);
@@ -60,14 +64,15 @@ class UserController extends Controller
         {
              return response()->json($validator->errors(), 400);
         }
+                
 
         $user = User::create(array_merge(
                     $validator->validated(),
                     [   'user_id' => $request->user_id,
                         'password' => bcrypt($request->password),
                         'read_name' => $request->read_name,
-                        'status' => $request->status,
-                        'birthday' => $request->birthday,
+                        'status' => $request->status ? $request->status : '',
+                        'birthday' => $request->birthday ? $request->birthday : '',
                         'phone_number' => $request->phone_number,
                         'memo' => $request->memo,
                         'phone_device' => $request->phone_device,
@@ -99,7 +104,7 @@ class UserController extends Controller
         $user = User::find($id);
         
         if (!$user) {
-            return response()->json(['error' => 'ユーザーが存在しません'], 404);
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
         }
 
         if(auth()->user()->role_id != 1 && $user->group_id != auth()->user()->group_id) 
@@ -150,7 +155,7 @@ class UserController extends Controller
         $user = User::find($id);
         if (!$user) 
         {
-            return response()->json(['error' => 'ユーザーが存在しません'], 404);
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
         }
 
         if(auth()->user()->role_id != 1 && auth()->user()->group_id != $user->group_id) 

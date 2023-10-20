@@ -27,7 +27,6 @@ Route::group([
     Route::post('login', 'App\Http\Controllers\AuthController@login');
     Route::post('register', 'App\Http\Controllers\AuthController@register');
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
-    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
     Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');
 
     Route::group(['middleware' => 'role:1'], function () {
@@ -38,7 +37,7 @@ Route::group([
         Route::post('leader/update/{id}', [App\Http\Controllers\AdminController::class, 'updateLeader']);
         Route::delete('leader/{id}', [App\Http\Controllers\AdminController::class, 'deleteLeader']);
     });
-    
+        
     Route::group(['middleware' => 'role:2'], function () {
 
         Route::get('user/index', [App\Http\Controllers\UserController::class, 'getUsers']);
@@ -63,12 +62,16 @@ Route::group([
         //blog
         Route::post('blog/create', [App\Http\Controllers\PostController::class, 'createBlog'])->name('blog.create');
         Route::get('blog', [App\Http\Controllers\PostController::class, 'getAllBlogs'])->name('blog.index');
-
+        
     });
 
     Route::group(['middleware' => 'role:3'], function () {
+        Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
+        Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');
+
         Route::get('/category/index/{group_id}', [App\Http\Controllers\CategoryController::class, 'getCategories']);
         Route::get('/genre/index/{category_id}', [App\Http\Controllers\GenreController::class, 'getGenres']);
+        
     });
     
 });
@@ -81,7 +84,7 @@ Route::post('articles', 'App\Http\Controllers\ArticleController@store');
 Route::put('articles/{article}', 'App\Http\Controllers\ArticleController@update');
 Route::delete('articles/{article}', 'App\Http\Controllers\ArticleController@delete');
 
-Route::get('/image/{path}', function ($path) {
+Route::get('/images/{path}', function ($path) {
     $filePath = public_path('upload/images/' . $path);
     return response()->file($filePath);
 });

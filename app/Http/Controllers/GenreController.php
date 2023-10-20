@@ -47,7 +47,7 @@ class GenreController extends Controller
         $genre = Genre::find($id);
 
         if (!$genre) {
-            return response()->json(['error' => 'ジャンルが見つかりません'], 404);
+            return response()->json(['message' => 'ジャンルが見つかりません'], 404);
         }
     
         $genre->delete();
@@ -66,7 +66,7 @@ class GenreController extends Controller
         $genre = Genre::find($id);
 
         if (!$genre) {
-            return response()->json(['error' => 'ジャンルは正常に削除されました'], 404);
+            return response()->json(['message' => 'ジャンルは正常に削除されました'], 404);
         }
         $exist_genre = Genre::where('category_id', $genre->category_id)->where('name', $request->name)->get();
 

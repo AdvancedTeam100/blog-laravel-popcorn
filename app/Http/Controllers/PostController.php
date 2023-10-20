@@ -58,7 +58,7 @@ class PostController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors()], 400);
         } 
     
         $pdfFileNames = [];
@@ -119,7 +119,7 @@ class PostController extends Controller
         $blog = Blog::find($id);
 
         if (!$blog) {
-            return response()->json(['error' => 'ブログが見つかりません'], 404);
+            return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
         $genre_id = $blog->genre_id;
@@ -152,7 +152,7 @@ class PostController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors()], 400);
         } 
     
         $pdfFileNames = [];
@@ -205,7 +205,7 @@ class PostController extends Controller
         $blog = Blog::find($id);
 
         if (!$blog) {
-            return response()->json(['error' => 'ブログが見つかりません'], 404);
+            return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
         $genre_id = $blog->genre_id;
@@ -236,7 +236,7 @@ class PostController extends Controller
         $blog = Blog::find($id);
 
         if (!$blog) {
-            return response()->json(['error' => 'ブログが見つかりません'], 404);
+            return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
         //No SuperAdmin

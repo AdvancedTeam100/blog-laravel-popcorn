@@ -40,7 +40,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['error' => 'カテゴリが見つかりません'], 404);
+            return response()->json(['message' => 'カテゴリが見つかりません'], 404);
         }
     
         $category->delete();
@@ -60,7 +60,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['error' => 'カテゴリが見つかりません'], 404);
+            return response()->json(['message' => 'カテゴリが見つかりません'], 404);
         }
         $category->name = $request->name;
         $category->update();
