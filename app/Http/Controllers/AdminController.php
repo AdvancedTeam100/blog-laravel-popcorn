@@ -50,16 +50,22 @@ class AdminController extends Controller
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:100|unique:users',
-            'user_id' => 'required|string|between:2,100|unique:users',
-            'password' => 'required|string|min:6',
+            'user_id' => 'required|string|between:1,100|unique:users',
+            'password' => 'required|string|min:1',
         ]);
 
         if($validator->fails()){
              return response()->json($validator->errors(), 400);
         }
         $group = Group::create([
-            'name' => $request->user_id
+            'name' => $request->name
         ]);
+
+        $avatarFileName = '';   
+        if($request->file('avatar')) {
+            $avatarFileName = time().'.'.$request->file('avatar')->extension();
+            $request->file('avatar')->move(public_path('upload/images'), $avatarFileName);
+        }
 
         $common1_permission = $request->common1_permission;
         $user = User::create(array_merge(
@@ -69,7 +75,7 @@ class AdminController extends Controller
                         'name' => $request->name,
                         'read_name' => $request->read_name,
                         'status' => $request->status,
-                        'birthday' => $request->birthday,
+                        'birthday' => $request->birthday ? $request->birthday : '',
                         'phone_number' => $request->phone_number,
                         'memo' => $request->memo,
                         'phone_device' => $request->phone_device,
@@ -77,6 +83,7 @@ class AdminController extends Controller
                         'work_life' => $request->work_life,
                         'die_life' => $request->die_life,
                         'healthy_life' => $request->healthy_life,
+                        'avatar' => $avatarFileName,                        
                         'average_life' => $request->average_life,
                         'group_id' => $group->id,
                         'role_id' => '2',                        
@@ -119,7 +126,7 @@ class AdminController extends Controller
 
         // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
+            'name' => 'required|string|between:1,100',
             'email' => [
                 'required',
                 'string',
@@ -130,10 +137,10 @@ class AdminController extends Controller
             'user_id' => [
                 'required',
                 'string',
-                'between:2,100',
+                'between:1,100',
                 Rule::unique('users')->ignore($id),
             ],
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:1',
         ]);
 
         if ($validator->fails()) {

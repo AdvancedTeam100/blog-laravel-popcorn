@@ -28,7 +28,7 @@ class PostController extends Controller
         $genre = Genre::find($genre_id);
         if(!$genre) {
             return response()->json([
-                'error' => "正しいジャンルを選択してください。"
+                'message' => "正しいジャンルを選択してください。"
             ], 400);
         }
         $category = $genre->category;
@@ -38,7 +38,7 @@ class PostController extends Controller
             if($category->group_id != auth()->user()->group_id) 
             {
                 return response()->json([
-                    'error' => "正しいジャンルを選択してください。"
+                    'message' => "正しいジャンルを選択してください。"
                 ], 400);
             } 
         }
@@ -126,7 +126,7 @@ class PostController extends Controller
         $genre = Genre::find($genre_id);
         if(!$genre) {
             return response()->json([
-                'error' => "正しいブログを選択してください。"
+                'message' => "正しいブログを選択してください。"
             ], 400);
         }
         $category = $genre->category;
@@ -136,7 +136,7 @@ class PostController extends Controller
             if($category->group_id != auth()->user()->group_id) 
             {
                 return response()->json([
-                    'error' => "正しいブログを選択してください。"
+                    'message' => "正しいブログを選択してください。"
                 ], 400);
             } 
         }
@@ -212,7 +212,7 @@ class PostController extends Controller
         $genre = Genre::find($genre_id);
         if(!$genre) {
             return response()->json([
-                'error' => "正しいブログを選択してください。"
+                'message' => "正しいブログを選択してください。"
             ], 400);
         }
         $category = $genre->category;
@@ -222,7 +222,7 @@ class PostController extends Controller
             if($category->group_id != auth()->user()->group_id) 
             {
                 return response()->json([
-                    'error' => "正しいブログを選択してください。"
+                    'message' => "正しいブログを選択してください。"
                 ], 400);
             } 
         }
@@ -246,13 +246,13 @@ class PostController extends Controller
             if(!in_array($blog->category_id,  json_decode(auth()->user()->common1_permission)) && auth()->user()->group_id != $blog->group_id) 
             {
                 return response()->json([
-                    'error' => "ブログにアクセスできません"
+                    'message' => "ブログにアクセスできません"
                 ], 406);  
             } 
 
             if(auth()->user()->role_id < 2 && !in_array($blog->category_id, json_decode(auth()->user()->mygroup_permission))) {
                 return response()->json([
-                    'error' => "ブログにアクセスできません"
+                    'message' => "ブログにアクセスできません"
                 ], 406);  
             }
         }
@@ -309,5 +309,12 @@ class PostController extends Controller
 
         return json_encode($tree);
     }
+    
+    public function getBlogs ($genre_id) 
+    {
+        // $blogs = Blog::all();
+        $blogs = Blog::where('genre_id', $genre_id)->get();
 
+        return response()->json($blogs);
+    }
 }

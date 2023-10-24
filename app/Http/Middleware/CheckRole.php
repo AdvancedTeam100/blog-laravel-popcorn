@@ -15,7 +15,7 @@ class CheckRole
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $role)
+public function handle(Request $request, Closure $next, $role)
     {
         if(auth()->user()) {
             //SuperAdmin
@@ -24,8 +24,8 @@ class CheckRole
                     return $next($request);
                 } else {
                     return response()->json([
-                        'error' => 'ユーザーが許可されていない',
-                    ], 401); 
+                        'message' => 'ユーザーが許可されていない',
+                    ], 406); 
                 }
             }
             //TeamLeader
@@ -34,8 +34,8 @@ class CheckRole
                     return $next($request);
                 } else {
                     return response()->json([
-                        'error' => 'ユーザーが許可されていない',
-                    ], 401); 
+                        'message' => 'ユーザーが許可されていない',
+                    ], 406); 
                 }
             }
             //User 
@@ -45,8 +45,8 @@ class CheckRole
         } else {
             
             return response()->json([
-                'error' => 'ユーザーが許可されていない',
-            ], 401); 
+                'message' => 'ユーザーが許可されていない',
+            ], 406); 
         }
 
 

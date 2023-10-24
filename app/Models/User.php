@@ -38,7 +38,8 @@ class User extends Authenticatable implements JWTSubject
         'common1_permission',
         'mygroup_permission',
         'group_id',
-        'role_id'
+        'role_id',
+        'avatar'
         ];
 
     /**
@@ -82,5 +83,10 @@ class User extends Authenticatable implements JWTSubject
     public function blogs()
     {
         return $this->hasMany(Blog::class);
+    }
+
+    public function group() 
+    {
+        return $this->belongsTo(Group::class);
     }
 }

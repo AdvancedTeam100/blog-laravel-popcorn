@@ -21,9 +21,9 @@ class UserController extends Controller
     public function getUsers() 
     {
         if(auth()->user()->role_id == 1) {
-            $users = User::all();
+            $users = User::with('group')->where('role_id', '!=', 1)->get();
         } else {
-            $users = User::where('group_id', auth()->user()->group_id)->get();
+            $users = User::with('group')->where('group_id', auth()->user()->group_id)->where('role_id', 3)->get();
         }
         return response()->json($users);
     }
@@ -54,17 +54,35 @@ class UserController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
+            'name' => 'required|string|between:1,100',
             'email' => 'required|string|email|max:100|unique:users',
-            'user_id' => 'required|string|between:2,100|unique:users',
-            'password' => 'required|string|min:6',
+            'user_id' => 'required|string|between:1,100|unique:users',
+            'password' => 'required|string|min:1',
+            'avatar' => 'nullable|mimes:jpeg,png'       
         ]);
 
         if($validator->fails())
         {
              return response()->json($validator->errors(), 400);
         }
-                
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+        
+        if(auth()->user()->role_id == 1) {
+            // if($request->group_id) 
+            //     return response()->json(['message' => "間違った要求"], 400);
+            $group_id = $request->group_id;
+        } else {
+            $group_id = auth()->user()->group_id;
+        }
+        
+        $avatarFileName = '';   
+        if($request->file('avatar')) {
+            $avatarFileName = time().'.'.$request->file('avatar')->extension();
+            $request->file('avatar')->move(public_path('upload/images'), $avatarFileName);
+        }
 
         $user = User::create(array_merge(
                     $validator->validated(),
@@ -81,13 +99,14 @@ class UserController extends Controller
                         'die_life' => $request->die_life,
                         'healthy_life' => $request->healthy_life,
                         'average_life' => $request->average_life,
-                        'group_id' => auth()->user()->role_id == 1 ? $request->group_id : auth()->user()->group_id,
-                        'role_id' => '3',                        
+                        'group_id' => $group_id,
+                        'role_id' => '3',
+                        'avatar' => $avatarFileName,                        
                         'common1_permission' => json_encode($request->common1_permission),
                         'mygroup_permission' => json_encode($request->mygroup_permission),
                     ]
                 ));
-        
+
         return response()->json([
             'message' => 'ユーザーが正常に登録されました',
             'user' => $user
@@ -110,7 +129,7 @@ class UserController extends Controller
         if(auth()->user()->role_id != 1 && $user->group_id != auth()->user()->group_id) 
         {
             return response()->json([
-                'error' => "このユーザーはあなたのグループに属していません。"
+                'message' => "このユーザーはあなたのグループに属していません。"
             ], 406);
         }
 
@@ -121,7 +140,7 @@ class UserController extends Controller
 
     } 
 
-    /**
+    /**     
      * SuperAdminによるユーザーの削除
      * 
      * @return \Illuminate\Http\JsonResponse
@@ -144,7 +163,7 @@ class UserController extends Controller
                 'between:2,100',
                 Rule::unique('users')->ignore($id),
             ],
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -161,7 +180,7 @@ class UserController extends Controller
         if(auth()->user()->role_id != 1 && auth()->user()->group_id != $user->group_id) 
         {
             return response()->json([
-                'error' => "このユーザーはあなたのグループに属していません。"
+                'message' => "このユーザーはあなたのグループに属していません。"
             ], 406);
         }
 
@@ -191,4 +210,39 @@ class UserController extends Controller
             'user' => $user
         ], 201); 
     }
+
+    public function getCategoriesForUser() {
+        $common_group = Group::find(1);
+        $common_group_categories = $common_group->categories()->get() ? $common_group->categories()->get() : [];
+
+        $mygroup_categories = [];
+        $role = auth()->user()->role_id;
+        if($role == 2) {
+            $mygroup = Group::find(auth()->user()->group_id);
+            $mygroup_categories = $mygroup ? $mygroup->categories()->get() : [];
+        }
+
+        if($role == 1) {
+            $mygroup_categories = Category::all();
+        }
+
+        return response()->json([
+            'common_group_categories' => $common_group_categories,
+            'mygroup_categories' => $mygroup_categories
+        ]);
+    }
+
+    public function getAllGroups () {
+        // $groups = Group::where('id', '!=', 1)->get();
+
+        $groups = Group::all();
+
+        return response()->json($groups);
+    }
+
+
+    
 }
+
+
+

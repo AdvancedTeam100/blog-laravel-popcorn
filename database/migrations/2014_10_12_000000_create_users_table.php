@@ -32,7 +32,8 @@ class CreateUsersTable extends Migration
             $table->integer('average_life');
             $table->json('common1_permission')->nullable();
             $table->json('mygroup_permission')->nullable();
-            // $table->string('group_id');
+            $table->string('group_id')->nullable();
+            $table->string('avatar')->nullable();
             $table->json('view_groups')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('role_id')->nullable();

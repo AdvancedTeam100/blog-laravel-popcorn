@@ -3,16 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Group;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
-{
+{       
 
     public function getCategories ($group_id)
     {
         $categories = Category::where('group_id', $group_id)->get();
         return response()->json($categories);
+    }
+
+    public function getAllCategories ()
+    {
+
+        if(auth()->user()->role_id == 2) {
+            $group = Group::find(auth()->user()->group_id);
+            if($group) {
+                $categories = $group->categories()->get();
+                return response()->json($categories);
+            } else {
+                return response()->json([
+                    "message" => "グループは存在しません",
+                ], 404);
+            }
+        }
+        
+        $groups = Group::all();
+        $temp = array();
+        foreach ($groups as $key => $group) {
+            $group_temp  = array(
+                "id" => $group->id,
+                "name" => $group->name,
+                "categories"=> []
+            );
+
+            $categories = $group->categories()->get();
+            foreach ($categories as $key1 => $category) {
+                $group_temp['categories'][]  = $category;
+            }
+            $temp[] = $group_temp;           
+        }
+
+        return response()->json($temp);
+     
     }
 
     public function addCategory (Request $request) 
@@ -70,6 +107,5 @@ class CategoryController extends Controller
                 'message' => 'カテゴリが正常に更新されました',
                 'category' => $category
             ], 201);
-
     }
  }

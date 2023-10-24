@@ -25,15 +25,16 @@ class UsersTableSeeder extends Seeder
         // will be too slow.
 
         User::create([
-            'user_id' => 'Super Admin',
+            'user_id' => 'admin',
             'password' => bcrypt('123456'),
-            'email' => 'popcorn@gmail.com',
-            'name' => 'Potter Amos',
-            'read_name' => 'Potter Amos',
+            'email' => 'suzuki@gmail.com',
+            'name' => '鈴木',
+            'read_name' => 'すずき',
             'status' => '1',
             'birthday' => '1990-01-01',
             'phone_number' => '1234567890',
-            'memo' => 'My memo',
+            'memo' => '・副業上手くいってないんですけど、応募資格ありますか？
+            →全然OKです！時間が余ったら相談してみてください！役に立つかもです！',
             'phone_device' => 'android',
             'ninetieth_life' => 90,
             'work_life' => 40,

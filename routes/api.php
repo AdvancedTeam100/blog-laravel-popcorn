@@ -36,17 +36,24 @@ Route::group([
         Route::post('leader/create', [App\Http\Controllers\AdminController::class, 'addLeader']);
         Route::post('leader/update/{id}', [App\Http\Controllers\AdminController::class, 'updateLeader']);
         Route::delete('leader/{id}', [App\Http\Controllers\AdminController::class, 'deleteLeader']);
+
+
     });
         
     Route::group(['middleware' => 'role:2'], function () {
 
         Route::get('user/index', [App\Http\Controllers\UserController::class, 'getUsers']);
         Route::get('user/groupusers', [App\Http\Controllers\UserController::class, 'getGroupUsers']);
+        Route::get('user/categories', [App\Http\Controllers\UserController::class, 'getCategoriesForUser']);
+        Route::get('user/group/getall', [App\Http\Controllers\UserController::class, 'getAllGroups']);
 
         Route::get('user/{id}', [App\Http\Controllers\UserController::class, 'getUserById']);
         Route::post('user/create', [App\Http\Controllers\UserController::class, 'addUser']);
         Route::post('user/update/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
         Route::delete('user/{id}', [App\Http\Controllers\UserController::class, 'deleteUser']);
+
+
+        // Route:
 
         //category
         Route::post('/category/create', [App\Http\Controllers\CategoryController::class, 'addCategory']);
@@ -62,16 +69,21 @@ Route::group([
         //blog
         Route::post('blog/create', [App\Http\Controllers\PostController::class, 'createBlog'])->name('blog.create');
         Route::get('blog', [App\Http\Controllers\PostController::class, 'getAllBlogs'])->name('blog.index');
-        
     });
 
     Route::group(['middleware' => 'role:3'], function () {
         Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
         Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');
 
+        Route::get('/category/all', [App\Http\Controllers\CategoryController::class, 'getAllCategories']);
         Route::get('/category/index/{group_id}', [App\Http\Controllers\CategoryController::class, 'getCategories']);
         Route::get('/genre/index/{category_id}', [App\Http\Controllers\GenreController::class, 'getGenres']);
-        
+        Route::get('/genre/all', [App\Http\Controllers\GenreController::class, 'getAllGenres']);
+        Route::get('/genre/allbygroup', [App\Http\Controllers\GenreController::class, 'getGenresByGroup']);
+
+        Route::get('blog/{group_id}', [App\Http\Controllers\PostController::class, 'getBlogs']);
+        Route::get('blog/show/{id}', [App\Http\Controllers\PostController::class, 'show']);
+
     });
     
 });
