@@ -45,12 +45,11 @@ Route::group([
         Route::get('user/index', [App\Http\Controllers\UserController::class, 'getUsers']);
         Route::get('user/groupusers', [App\Http\Controllers\UserController::class, 'getGroupUsers']);
         Route::get('user/categories', [App\Http\Controllers\UserController::class, 'getCategoriesForUser']);
-        Route::get('user/group/getall', [App\Http\Controllers\UserController::class, 'getAllGroups']);
 
-        Route::get('user/{id}', [App\Http\Controllers\UserController::class, 'getUserById']);
+        Route::get('user/get/{id}', [App\Http\Controllers\UserController::class, 'getUserById']);
         Route::post('user/create', [App\Http\Controllers\UserController::class, 'addUser']);
         Route::post('user/update/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
-        Route::delete('user/{id}', [App\Http\Controllers\UserController::class, 'deleteUser']);
+        Route::post('user/delete/{id}', [App\Http\Controllers\UserController::class, 'deleteUser']);
 
 
         // Route:
@@ -59,44 +58,56 @@ Route::group([
         Route::post('/category/create', [App\Http\Controllers\CategoryController::class, 'addCategory']);
         Route::delete('/category/{id}', [App\Http\Controllers\CategoryController::class, 'deleteCategory']);
         Route::post('/category/update/{id}', [App\Http\Controllers\CategoryController::class, 'updateCategory']);
+        Route::post('/category/delete/{id}', [App\Http\Controllers\CategoryController::class, 'deleteCategory']);
 
         
         //genre
         Route::post('/genre/create', [App\Http\Controllers\GenreController::class, 'addGenre']);
-        Route::delete('/genre/{id}', [App\Http\Controllers\GenreController::class, 'deleteGenre']);
+        Route::post('/genre/delete/{id}', [App\Http\Controllers\GenreController::class, 'deleteGenre']);
         Route::post('/genre/update/{id}', [App\Http\Controllers\GenreController::class, 'updateGenre']);
 
         //blog
-        Route::post('blog/create', [App\Http\Controllers\PostController::class, 'createBlog'])->name('blog.create');
-        Route::get('blog', [App\Http\Controllers\PostController::class, 'getAllBlogs'])->name('blog.index');
+        Route::post('blog/create', [App\Http\Controllers\PostController::class, 'createBlog']);
+        Route::post('blog/update/{id}', [App\Http\Controllers\PostController::class, 'updateBlog']);
+        Route::post('blog/delete/{id}', [App\Http\Controllers\PostController::class, 'deleteBlog']);
+
+        // Route::get('blog', [App\Http\Controllers\PostController::class, 'getAllBlogs'])->name('blog.index');
     });
 
     Route::group(['middleware' => 'role:3'], function () {
+        Route::get('user/group/getall', [App\Http\Controllers\UserController::class, 'getAllGroups']);
+
         Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
         Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');
+
+        Route::get('/category/allcategories', [App\Http\Controllers\CategoryController::class, 'getAllGroup']);
+        Route::get('/category/currentgroup/{id}', [App\Http\Controllers\CategoryController::class, 'getCurrentGroup']);
+        // Route::get('/category/currentcategory/{id}', [App\Http\Controllers\CategoryController::class, 'getCurrentCategory']);
+
 
         Route::get('/category/all', [App\Http\Controllers\CategoryController::class, 'getAllCategories']);
         Route::get('/category/index/{group_id}', [App\Http\Controllers\CategoryController::class, 'getCategories']);
         Route::get('/genre/index/{category_id}', [App\Http\Controllers\GenreController::class, 'getGenres']);
         Route::get('/genre/all', [App\Http\Controllers\GenreController::class, 'getAllGenres']);
         Route::get('/genre/allbygroup', [App\Http\Controllers\GenreController::class, 'getGenresByGroup']);
+        Route::get('/genre/currentcategory/{id}', [App\Http\Controllers\GenreController::class, 'getCurrentCategory']);
 
-        Route::get('blog/{group_id}', [App\Http\Controllers\PostController::class, 'getBlogs']);
+        Route::get('/blog/currentgenre/{id}', [App\Http\Controllers\PostController::class, 'getCurrentGenre']);
+        Route::post('blog/search', [App\Http\Controllers\PostController::class, 'searchResultBlogs']);
+        Route::get('blog/new_blogs', [App\Http\Controllers\PostController::class, 'getNewBlogs']);
         Route::get('blog/show/{id}', [App\Http\Controllers\PostController::class, 'show']);
+        // Route::get('blog/{group_id}', [App\Http\Controllers\PostController::class, 'getBlogs']);
 
     });
-    
+
 });
 
-// Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('articles');
-
-Route::get('articles', 'App\Http\Controllers\ArticleController@index');
-Route::get('articles/{article}', 'App\Http\Controllers\ArticleController@show');
-Route::post('articles', 'App\Http\Controllers\ArticleController@store');
-Route::put('articles/{article}', 'App\Http\Controllers\ArticleController@update');
-Route::delete('articles/{article}', 'App\Http\Controllers\ArticleController@delete');
 
 Route::get('/images/{path}', function ($path) {
     $filePath = public_path('upload/images/' . $path);
-    return response()->file($filePath);
+    if($filePath){
+        return response()->file($filePath);
+    } else {
+        // return response()->error();
+    }
 });

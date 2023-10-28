@@ -17,7 +17,13 @@ class GroupTableSeeder extends Seeder
     public function run()
     {
         Group::create([
-            'name' => '共通グループ1'
+            'name' => '共通1',
+            'user_id' => '1'
+        ]);
+
+        Group::create([
+            'name' => '共通2',
+            'user_id' => '1'
         ]);
     }
 }

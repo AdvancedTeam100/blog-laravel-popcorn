@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'user_id',
+        'parent_id',
         'name',
         'email',
         'password',
@@ -35,10 +36,9 @@ class User extends Authenticatable implements JWTSubject
         'die_life',
         'healthy_life',
         'average_life',
-        'common1_permission',
-        'mygroup_permission',
         'group_id',
         'role_id',
+        'allowed_categories',
         'avatar'
         ];
 

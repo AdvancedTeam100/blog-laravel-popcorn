@@ -26,6 +26,7 @@ class UsersTableSeeder extends Seeder
 
         User::create([
             'user_id' => 'admin',
+            'parent_id' => '0',
             'password' => bcrypt('123456'),
             'email' => 'suzuki@gmail.com',
             'name' => '鈴木',
@@ -33,14 +34,15 @@ class UsersTableSeeder extends Seeder
             'status' => '1',
             'birthday' => '1990-01-01',
             'phone_number' => '1234567890',
-            'memo' => '・副業上手くいってないんですけど、応募資格ありますか？
-            →全然OKです！時間が余ったら相談してみてください！役に立つかもです！',
-            'phone_device' => 'android',
+            'memo' => 'これはメモテキストです',
+            'phone_device' => '1',
             'ninetieth_life' => 90,
-            'work_life' => 40,
+            'work_life' => 60,
             'die_life' => 80,
             'healthy_life' => 70,
             'average_life' => 75,
+            'avatar' => 'admin.png',
+            'status' => '1', 
             'group_id' => '0',
             'role_id' => 1, // Assign the appropriate role ID
             'email_verified_at' => now(),

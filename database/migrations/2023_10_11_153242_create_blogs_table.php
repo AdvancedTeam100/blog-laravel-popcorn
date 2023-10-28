@@ -20,11 +20,13 @@ class CreateBlogsTable extends Migration
             $table->json('pdf')->nullable();
             $table->json('videos')->nullable();
             $table->json('images')->nullable();
-            $table->string('group_id');
-            $table->string('category_id');
+            $table->string('user_id')->nullable();
+            $table->string('group_id')->nullable();
+            $table->string('category_id')->nullable();
             $table->unsignedBigInteger('genre_id');
             $table->foreign('genre_id')->references('id')->on('genres');
-            $table->string('status')->default('1');
+            $table->string('status')->default('1')->nullable();
+            $table->string('collabrative_editing')->default('1')->nullable();  //collabrative edit if this value is 2
             $table->timestamps();
         });
     }

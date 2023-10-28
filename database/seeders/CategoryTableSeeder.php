@@ -15,18 +15,39 @@ class CategoryTableSeeder extends Seeder
     public function run()
     {
         Category::create([
-            'name' => '共通グループ1',
-            'group_id' => 1,
+            'name' => '共通1_ステップ1',
+            'group_id' => '1',
+            'user_id' => '1'
         ]);
 
         Category::create([
-            'name' => '共通グループ2',
-            'group_id' => 1,
+            'name' => '共通1_ステップ2',
+            'group_id' => '1',
+            'user_id' => '1'
         ]);
 
         Category::create([
-            'name' => '共通グループ3',
-            'group_id' => 1,
+            'name' => '共通1_ステップ3',
+            'group_id' => '1',
+            'user_id' => '1'
+        ]);
+
+        Category::create([
+            'name' => '共通2_ステップ1',
+            'group_id' => '2',
+            'user_id' => '1'
+        ]);
+
+        Category::create([
+            'name' => '共通2_ステップ2',
+            'group_id' => '2',
+            'user_id' => '1'
+        ]);
+
+        Category::create([
+            'name' => '共通2_ステップ3',
+            'group_id' => '2',
+            'user_id' => '1'
         ]);
     }
 }

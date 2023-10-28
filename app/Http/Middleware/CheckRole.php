@@ -23,7 +23,7 @@ public function handle(Request $request, Closure $next, $role)
                 if (auth()->user()->role_id == $role) {
                     return $next($request);
                 } else {
-                    return response()->json([
+                    return response()->json([   
                         'message' => 'ユーザーが許可されていない',
                     ], 406); 
                 }
@@ -48,8 +48,5 @@ public function handle(Request $request, Closure $next, $role)
                 'message' => 'ユーザーが許可されていない',
             ], 406); 
         }
-
-
-
     }
 }

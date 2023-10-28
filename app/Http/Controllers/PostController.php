@@ -11,36 +11,95 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-
+    
 class PostController extends Controller
 {
+    private function getCurrent_Genre ($id) {
+        $genre = Genre::find($id);
+        if(!$genre) {
+            return response()->json([
+                'message' => 'そのジャンルは存在しません。',
+            ], 404);
+        }
+
+        if(auth()->user()->role_id != 1) {
+
+            $allowed_categories = json_decode(auth()->user()->allowed_categories);
+
+            $allowed = false;
+            foreach ($allowed_categories as $key => $categories) {
+                    if(in_array($genre->category_id, $categories)) {
+                        $allowed  = true; 
+                        break;
+                    }
+            }
+
+            $category = Category::find($genre->category_id);
+
+            if(auth()->user()->role_id == 2) {
+                
+                if(!$allowed && $category->group_id != '1' &&  $category->group_id != auth()->user()->group_id) {
+                    return response()->json([
+                        'message' => 'そのジャンルに対する許可がありません。',
+                    ], 400);
+                }
+            } else {
+                if(!$allowed) {
+                    return response()->json([
+                        'message' => 'そのジャンルに対する許可がありません。',
+                    ], 400);
+                }
+            }
+        }   
+        $category = $genre->category;
+        $group = $category->group;
+        $blogs = $genre->blogs()->get();
+
+        $genre['blog_count'] = count($blogs);
+        $genre['blogs'] = $blogs;
+        $genre['parent_category'] = $category;
+        $genre['parent_group'] = $group;
+
+        return $genre;
+    }
+
+    public function getCurrentGenre($id) 
+    {
+        $genre = $this->getCurrent_Genre($id);
+        return response()->json($genre);
+    }
+
+
     public function createBlog(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|between:2,100',
+            'title' => 'required|string|between:1,100',
             'genre_id' => 'required'
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
         }
         
-        $genre_id = $request->genre_id;
-        $genre = Genre::find($genre_id);
+        $genre = Genre::find($request->genre_id);
         if(!$genre) {
             return response()->json([
                 'message' => "正しいジャンルを選択してください。"
             ], 400);
         }
-        $category = $genre->category;
+
+
+        $category = $genre->category;   
 
         if(auth()->user()->role_id != 1)
         {
-            if($category->group_id != auth()->user()->group_id) 
-            {
-                return response()->json([
-                    'message' => "正しいジャンルを選択してください。"
-                ], 400);
-            } 
+            if(auth()->user()->role_id == 2) {
+
+                if($category->group_id != auth()->user()->group_id){
+                    return response()->json([
+                        'message' => 'このカテゴリにはアクセスできません',
+                    ], 400);
+                }
+            }
         }
 
         $blog = new Blog;
@@ -101,17 +160,17 @@ class PostController extends Controller
         $blog->save();
     
         return response()->json([
-            'message' => 'ブログが正常に保存されました',
-            'blog' => $blog
+            'message' => 'ブログが正常に保存されました'
         ], 201);
     }
 
-
     public function updateBlog (Request $request, $id)
     {
+
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|between:2,100',
+            'title' => 'required|string|between:1,100',
         ]);
+
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
         }
@@ -122,8 +181,7 @@ class PostController extends Controller
             return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
-        $genre_id = $blog->genre_id;
-        $genre = Genre::find($genre_id);
+        $genre = Genre::find($blog->genre_id);
         if(!$genre) {
             return response()->json([
                 'message' => "正しいブログを選択してください。"
@@ -133,12 +191,14 @@ class PostController extends Controller
 
         if(auth()->user()->role_id != 1)
         {
-            if($category->group_id != auth()->user()->group_id) 
-            {
-                return response()->json([
-                    'message' => "正しいブログを選択してください。"
-                ], 400);
-            } 
+            if(auth()->user()->role_id == 2) {
+
+                if($category->group_id != auth()->user()->group_id){
+                    return response()->json([
+                        'message' => 'このカテゴリにはアクセスできません',
+                    ], 400);
+                }
+            }
         }
 
         $blog->title = $request->title;
@@ -208,8 +268,7 @@ class PostController extends Controller
             return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
-        $genre_id = $blog->genre_id;
-        $genre = Genre::find($genre_id);
+        $genre = Genre::find($blog->genre_id);
         if(!$genre) {
             return response()->json([
                 'message' => "正しいブログを選択してください。"
@@ -219,17 +278,26 @@ class PostController extends Controller
 
         if(auth()->user()->role_id != 1)
         {
-            if($category->group_id != auth()->user()->group_id) 
-            {
-                return response()->json([
-                    'message' => "正しいブログを選択してください。"
-                ], 400);
-            } 
+            if(auth()->user()->role_id == 2) {
+
+                if($category->group_id != auth()->user()->group_id){
+                    return response()->json([
+                        'message' => 'このカテゴリにはアクセスできません',
+                    ], 400);
+                }
+            }
         }
 
         $blog->delete();
-        return response()->json(['message' => 'ブログは正常に削除されました'], 201);
+
+        $parent_genre = $this->getCurrent_Genre($genre->id);
+        return response()->json([
+            'message' => 'ブログは正常に削除されました',
+            'current_genre' => $parent_genre
+    ], 201);
     }
+
+
 
     public function show($id) 
     {
@@ -239,77 +307,51 @@ class PostController extends Controller
             return response()->json(['message' => 'ブログが見つかりません'], 404);
         }
 
-        //No SuperAdmin
-        if(auth()->user()->role_id != 1) 
-        {
-
-            if(!in_array($blog->category_id,  json_decode(auth()->user()->common1_permission)) && auth()->user()->group_id != $blog->group_id) 
-            {
-                return response()->json([
-                    'message' => "ブログにアクセスできません"
-                ], 406);  
-            } 
-
-            if(auth()->user()->role_id < 2 && !in_array($blog->category_id, json_decode(auth()->user()->mygroup_permission))) {
-                return response()->json([
-                    'message' => "ブログにアクセスできません"
-                ], 406);  
-            }
+        $genre = Genre::find($blog->genre_id);
+        if(!$genre) {
+            return response()->json([
+                'message' => 'そのジャンルは存在しません。',
+            ], 404);
         }
+
+        if(auth()->user()->role_id != 1) {
+
+            $allowed_categories = json_decode(auth()->user()->allowed_categories);
+
+            $allowed = false;
+            foreach ($allowed_categories as $key => $categories) {
+                    if(in_array($genre->category_id, $categories)) {
+                        $allowed  = true; 
+                        break;
+                    }
+            }
+            
+            $category = Category::find($genre->category_id);
+
+            if(auth()->user()->role_id == 2) {
+                
+                if(!$allowed && $category->group_id != '1' &&  $category->group_id != auth()->user()->group_id) {
+                    return response()->json([
+                        'message' => 'このブログは見れません',
+                    ], 400);
+                }
+            } else {
+                if(!$allowed) {
+                    return response()->json([
+                        'message' => 'このブログは見れません',
+                    ], 400);
+                }
+            }
+        }  
+
+        $parent_genre = $blog->genre;
+        $parent_category = $parent_genre->category;
+        $parent_group = $parent_category->group;
+
 
         return response()->json($blog);
     }
 
-        
-    public function getAllBlogs() {
-
-        $blogs = Blog::with('group', 'category', 'genre')->orderBy('group_id')->orderBy('category_id')->orderBy('genre_id')->get();
-        // dd('d');
-
-        // if(auth()->user()->role_id == 2) {
-        //     $blogs = Blog::with('group', 'category', 'genre')->where('group_id', )->orderBy('group_id')->orderBy('category_id')->orderBy('genre_id')->get();
-        // }
-        
-        $tree = array();
-
-        foreach ($blogs as $current) {
-            $group_id = $current["group_id"];
-            $category_id = $current["category_id"];
-            $genre_id = $current["genre_id"];
-            $blog_id = $current["id"];
-            $current['pdf'] = json_decode($current['pdf']);
-            if (!isset($tree[$group_id])) {
-                $tree[$group_id] = array(
-                    "gourp_id" => $group_id,
-                    "group_name" => Group::where('id', $group_id)->get()->first() != null ? Group::where('id', $group_id)->get()->first()->name : ''
-                );
-            }
-            if (!isset($tree[$group_id][$category_id])) {
-                $tree[$group_id][$category_id] = array(
-                    "category_id" => $category_id,
-                    "category_name" => Category::where('id', $category_id)->get()->first() != null ? Category::where('id', $category_id)->get()->first()->name : ''
-                );
-            }
-            if (!isset($tree[$group_id][$category_id][$genre_id])) {
-                $tree[$group_id][$category_id][$genre_id] = array(
-                    "genre_id" => $genre_id, 
-                    "genre_name" => Genre::where('id', $genre_id)->get()->first() != null ? Genre::where('id', $genre_id)->get()->first()->name : ''
-                );
-            }
-            if (!isset($tree[$group_id][$category_id][$genre_id][$blog_id])) {
-                $tree[$group_id][$category_id][$genre_id][$blog_id] = array(
-                    "blog_id" => $blog_id,
-                    "blog_title" => $current->title,
-                    // 'blog' => $current
-                );
-            }
-        }
-
-        
-
-        return json_encode($tree);
-    }
-    
     public function getBlogs ($genre_id) 
     {
         // $blogs = Blog::all();
@@ -317,4 +359,67 @@ class PostController extends Controller
 
         return response()->json($blogs);
     }
+
+    private function getAllowedCategories() 
+    {
+        $allowed_categories = json_decode(auth()->user()->allowed_categories);
+        $temp = [];
+        foreach ($allowed_categories as $key => $categories) {
+            foreach ($categories as $key => $category_id) {
+                $temp[] = $category_id;
+            }
+        }
+
+        if(auth()->user()->role_id == 2) {
+            $group = Group::find(auth()->user()->group_id);
+            $categories = $group->categories()->get();
+            foreach ($categories as $key => $category) {
+                $temp[] = $category->id;
+            }
+
+            $c_group1 = Group::find('1');
+            $c1_categories = $c_group1->categories()->get();
+            foreach ($c1_categories as $key => $category) {
+                $temp[] = $category->id;
+            }
+        }
+
+        return $temp;
+    }
+
+    public function getNewBlogs () 
+    {        
+        if(auth()->user()->role_id == 1) {
+            $blogs = Blog::orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+            return response()->json($blogs);
+        } else {
+            $allowed_categories = $this->getAllowedCategories();
+            $blogs = Blog::whereIn('category_id', $allowed_categories)->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+        }
+        return response()->json($blogs);
+    }
+
+    public function searchResultBlogs(Request $request) {
+        
+        $title = $request->title;
+        $content = $request->content;
+
+        if(auth()->user()->role_id == 1) {
+            $blogs = Blog::orderBy('created_at', 'desc')
+            ->where('title', 'LIKE', '%' . $title . '%')
+            ->where('content', 'LIKE', '%' . $content . '%')
+            ->get();
+        } else {
+            $allowed_categories = $this->getAllowedCategories();
+            $blogs = Blog::where('category_id', $allowed_categories)->orderBy('created_at', 'desc')
+            ->where('title', 'LIKE', '%' . $title . '%')
+            ->where('content', 'LIKE', '%' . $content . '%')
+            ->get();
+        }       
+        return response()->json($blogs);
+    }   
 }

@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // This way, we can simply run 
         // $ php artisan db:seed and it will run all the called classes: 
-        $this->call(ArticlesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(RolesTableSeeder::class);
         $this->call(GroupTableSeeder::class);

@@ -16,17 +16,17 @@ class RolesTableSeeder extends Seeder
     {
         Role::create([
             'role' =>1, 
-            'role_name' => 'スパーアドミン'
+            'name' => 'スパーアドミン'
         ]);
 
         Role::create([
             'role' =>2, 
-            'role_name' => 'チームリーダ'
+            'name' => 'チームリーダ'
         ]);
 
         Role::create([
             'role' =>3, 
-            'role_name' => 'ユーザー'
+            'name' => 'ユーザー'
         ]);
     }
 }

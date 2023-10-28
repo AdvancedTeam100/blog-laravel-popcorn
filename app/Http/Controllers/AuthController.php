@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function login(Request $request){
     	$validator = Validator::make($request->all(), [
             'user_id' => 'required|string',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -39,11 +39,17 @@ class AuthController extends Controller
             return response()->json(['message' => 'メールアドレスかパスワードが間違っています。'], 401);
         }
 
+
+
         $credentials = [
             'user_id' => auth()->user()->user_id,
             'role_id' => auth()->user()->role_id,
             'name' => auth()->user()->name
         ];
+
+        if(auth()->user()->status == '2' || auth()->user()->status == '3') {
+            return response()->json(['message' => 'あなたのアカウントはブロックされています'], 401);
+        }
         $usertoken = JWT::encode($credentials, env("JWT_SECRET"), 'HS256');
         return $this->createNewToken($token, $usertoken);
     }

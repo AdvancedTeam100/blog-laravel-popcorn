@@ -23,7 +23,7 @@ class AdminController extends Controller
     public function getLeaders() {
         $leaders = User::where('role_id',2)->orderBy('id', 'asc')->get();
         return response()->json($leaders);
-    } 
+    }
 
     public function getLeaderById($id)
     {
@@ -48,17 +48,29 @@ class AdminController extends Controller
      */
     public function addLeader(Request $request) {
 
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:100|unique:users',
-            'user_id' => 'required|string|between:1,100|unique:users',
-            'password' => 'required|string|min:1',
-        ]);
+        // return response()->json([ "message" => json_decode($request->allowed_categories)]);
 
-        if($validator->fails()){
-             return response()->json($validator->errors(), 400);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|string|email|max:100|unique:users',
+            'user_id' => 'required|string|unique:users',
+            'password' => 'required|string',
+            'avatar' => 'nullable|mimes:jpeg,png',
+            'birthday' => 'date_format:Y-m-d',
+        ], [
+            'user_id.unique' => 'このユーザー ID はすでに取得されています。',
+            'email.unique' => 'このメールはすでに受信されています。',
+            'avatar.mimes' => 'アバターは JPEG または PNG 画像である必要があります。',
+            'birthday.date_format' => '誕生日は YYYY-MM-DD 形式である必要があります。'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(["message" =>  $validator->errors()], 400);
         }
+
         $group = Group::create([
-            'name' => $request->name
+            'name' => $request->name,
+            'user_id' => ''
         ]);
 
         $avatarFileName = '';   
@@ -67,30 +79,31 @@ class AdminController extends Controller
             $request->file('avatar')->move(public_path('upload/images'), $avatarFileName);
         }
 
-        $common1_permission = $request->common1_permission;
         $user = User::create(array_merge(
                     $validator->validated(),
                     [   'user_id' => $request->user_id,
+                        'parent_id' => auth()->user()->id,
                         'password' => bcrypt($request->password),
                         'name' => $request->name,
-                        'read_name' => $request->read_name,
-                        'status' => $request->status,
-                        'birthday' => $request->birthday ? $request->birthday : '',
-                        'phone_number' => $request->phone_number,
-                        'memo' => $request->memo,
-                        'phone_device' => $request->phone_device,
-                        'ninetieth_life' => $request->ninetieth_life,
-                        'work_life' => $request->work_life,
-                        'die_life' => $request->die_life,
-                        'healthy_life' => $request->healthy_life,
+                        'read_name' => $request->read_name ?: '',
+                        'status' => $request->status ?: '',
+                        'birthday' => $request->birthday ?: '1991-03-30',
+                        'phone_number' => $request->phone_number ?: '',
+                        'memo' => $request->memo ?: '',
+                        'phone_device' => $request->phone_device ?: '1',
+                        'ninetieth_life' => $request->ninetieth_life ?: '0' ,
+                        'work_life' => $request->work_life ?: '0' ,
+                        'die_life' => $request->die_life ?: '0',
+                        'healthy_life' => $request->healthy_life ?: '0',
                         'avatar' => $avatarFileName,                        
-                        'average_life' => $request->average_life,
-                        'group_id' => $group->id,
+                        'average_life' => $request->average_life ?: '0' ,
+                        'group_id' => $group->id ?:'',
                         'role_id' => '2',                        
-                        'common1_permission' => json_encode($common1_permission),
+                        'allowed_categories' => $request->allowed_categories ?: '',
                     ]
                 ));
-        
+        $group->user_id = $user->id;
+        $group->update();
 
         return response()->json([
             'message' => 'チームリーダーが登録されました',
@@ -124,28 +137,25 @@ class AdminController extends Controller
      */
     public function updateLeader(Request $request, $id) {
 
-        // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:1,100',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:100',
-                Rule::unique('users')->ignore($id),
-            ],
-            'user_id' => [
-                'required',
-                'string',
-                'between:1,100',
-                Rule::unique('users')->ignore($id),
-            ],
-            'password' => 'required|string|min:1',
+            'name' => 'required|string',
+            'email' => 'required|string|email',
+            'user_id' => 'required|string',
+            'password' => 'required|string',
+            'avatar' => 'nullable|mimes:jpeg,png',
+            'birthday' => 'date_format:Y-m-d',
+        ], [
+            'user_id.unique' => 'このユーザー ID はすでに取得されています。',
+            'email.unique' => 'このメールはすでに受信されています。',
+            'avatar.mimes' => 'アバターは JPEG または PNG 画像である必要があります。',
+            'birthday.date_format' => '誕生日は YYYY-MM-DD 形式である必要があります。'
         ]);
-
+        
+        
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json( ["message" =>  $validator->errors()], 400);
         }
+
 
         $leader = User::find($id);
 
@@ -153,27 +163,34 @@ class AdminController extends Controller
             return response()->json(['message' => 'グループリーダーが存在しない'], 404);
         }
 
-        $updatedData = $request->all();
-        $updatedData['user_id'] = $request->user_id;
-        $updatedData['password'] = bcrypt($request->password);
-        $updatedData['read_name'] = $request->read_name;
-        $updatedData['status'] = $request->status;
-        $updatedData['birthday'] = $request->birthday;
-        $updatedData['phone_number'] = $request->phone_number;
-        $updatedData['memo'] = $request->memo;
-        $updatedData['phone_device'] = $request->phone_device;
-        $updatedData['ninetieth_life'] = $request->ninetieth_life;
-        $updatedData['work_life'] = $request->work_life;
-        $updatedData['die_life'] = $request->die_life;
-        $updatedData['healthy_life'] = $request->healthy_life;
-        $updatedData['average_life'] = $request->average_life;
-        $updatedData['common1_permission'] = json_encode($request->common1_permission);
+        $avatarFileName = '';   
+        if($request->file('avatar')) {
+            $avatarFileName = time().'.'.$request->file('avatar')->extension();
+            $request->file('avatar')->move(public_path('upload/images'), $avatarFileName);
+        }   
 
-        $user->update($updatedData);
+        $leader['user_id'] = $request->user_id;
+        $leader['parent_id'] = auth()->user()->id;
+        // $leader['password'] = bcrypt($request->password);
+        $leader['read_name'] = $request->read_name ?: '';
+        $leader['status'] = $request->status ?: '';
+        $leader['birthday'] = $request->birthday ?: '1992-06-24';
+        $leader['phone_number'] = $request->phone_number ?: '';
+        $leader['memo'] = $request->memo ?:'';
+        $leader['phone_device'] = $request->phone_device ?: '1';
+        $leader['ninetieth_life'] = $request->ninetieth_life ?: '0';
+        $leader['work_life'] = $request->work_life ?: '0' ;
+        $leader['die_life'] = $request->die_life ?: '0';
+        $leader['healthy_life'] = $request->healthy_life ?: '0';
+        $leader['average_life'] = $request->average_life ?: '0';
+        $leader['allowed_categories'] = $request->allowed_categories ?: '';
+        $leader['avatar'] = $avatarFileName ?: '';
+
+        // $leader->update($updatedData);
+        $leader->update();
 
         return response()->json([
-            'message' => 'チームリーダーが正常に更新されました',
-            'user' => $user
+            'message' => 'チームリーダーが正常に更新されました'
         ], 201); 
     }
 

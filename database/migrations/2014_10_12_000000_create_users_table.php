@@ -16,12 +16,12 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('user_id')->unique();
+            $table->string('parent_id')->nullable();
             $table->string('password');
             $table->string('email')->unique();
             $table->string('name');
             $table->string('read_name');
-            $table->string('status');
-            $table->date('birthday'); // This creates the birthday column with date data type
+            $table->date('birthday')->nullable(); // This creates the birthday column with date data type
             $table->string('phone_number')->nullable();
             $table->string('memo')->nullable();
             $table->enum('phone_device', ['android', 'iphone'])->nullable();
@@ -30,13 +30,13 @@ class CreateUsersTable extends Migration
             $table->integer('die_life');
             $table->integer('healthy_life');
             $table->integer('average_life');
-            $table->json('common1_permission')->nullable();
-            $table->json('mygroup_permission')->nullable();
+            $table->json('allowed_categories')->nullable();
             $table->string('group_id')->nullable();
             $table->string('avatar')->nullable();
             $table->json('view_groups')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('role_id')->nullable();
+            $table->string('status');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
