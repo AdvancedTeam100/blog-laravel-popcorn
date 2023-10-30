@@ -164,7 +164,6 @@ class UserController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|email',
             'user_id' => 'required|string',
-            'password' => 'required|string',
             'avatar' => 'nullable|mimes:jpeg,png',
             'birthday' => 'date_format:Y-m-d',
         ], [

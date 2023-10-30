@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
-
+use Illuminate\Foundation\Auth\ThrottlesLogins;  
 class AuthController extends Controller
 {
 

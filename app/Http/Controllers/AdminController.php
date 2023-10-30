@@ -141,7 +141,6 @@ class AdminController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|email',
             'user_id' => 'required|string',
-            'password' => 'required|string',
             'avatar' => 'nullable|mimes:jpeg,png',
             'birthday' => 'date_format:Y-m-d',
         ], [
@@ -184,8 +183,10 @@ class AdminController extends Controller
         $leader['healthy_life'] = $request->healthy_life ?: '0';
         $leader['average_life'] = $request->average_life ?: '0';
         $leader['allowed_categories'] = $request->allowed_categories ?: '';
-        $leader['avatar'] = $avatarFileName ?: '';
 
+        if($avatarFileName != '') {
+            $leader['avatar'] = $avatarFileName;
+        }
         // $leader->update($updatedData);
         $leader->update();
 
