@@ -139,7 +139,7 @@ class CategoryController extends Controller
             return response()->json(['message' => 'カテゴリが見つかりません'], 404);
         }
 
-        if(auth()->user()->role_id == 2 && $request->group_id != auth()->user()->group_id)  
+        if(auth()->user()->role_id == 2 && $category->group_id != auth()->user()->group_id)  
         {
             return response()->json([
                 'message' => 'あなたはこのグループに対する編集権限を持っていません。',
