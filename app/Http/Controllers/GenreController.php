@@ -139,7 +139,9 @@ class GenreController extends Controller
                 ], 400);
             }
         }
-
+        
+        Blog::where('genre_id', $id)->delete();
+        
         $genre->delete();
 
         $parent_category = $this->getCurrent_Category($genre->category_id);

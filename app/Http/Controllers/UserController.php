@@ -238,39 +238,41 @@ class UserController extends Controller
         ], 201); 
     }
 
-    // public function getAllCategories() {
-    //     $groups = Group::all();
-    //     foreach ($groups as $key => $value) {
-            
-    //     }
-    // }
+    public function changeUserStatus ($id) {
 
-    public function getCategoriesForUser() {
-        $common_group = Group::find(1);
-        $common_group_categories = $common_group->categories()->get() ? $common_group->categories()->get() : [];
 
-        $mygroup_categories = [];
-        $role = auth()->user()->role_id;
-        if($role == 2) {
-            $mygroup = Group::find(auth()->user()->group_id);
-            $mygroup_categories = $mygroup ? $mygroup->categories()->get() : [];
-        }   
-
-        if($role == 1) {
-            $mygroup_categories = Category::all();
+        //exist
+        $user = User::find($id);
+        if (!$user) 
+        {
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
         }
 
+        if(auth()->user()->role_id != 1 && auth()->user()->group_id != $user->group_id) 
+        {
+            return response()->json([
+                'message' => "このユーザーはあなたのグループに属していません。"
+            ], 400);
+        }
+
+        if($user['status'] == '1') {
+            $user['status'] = '2';
+        } else {
+            $user['status'] = '1';
+        }
+        $user->update();
+
         return response()->json([
-            'common_group_categories' => $common_group_categories,
-            'mygroup_categories' => $mygroup_categories
-        ]);
+            'message' => '成功',
+        ], 201);
     }
+
 
     public function getAllGroups () {
         $groups = Group::all();
-        
         return response()->json($groups);
     }
+
 
 
     

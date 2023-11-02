@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Group;
 use App\Models\Blog;
+use App\Models\Genre    ;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
-{       
+{           
 
     public function getCategories ($group_id)
     {
@@ -118,6 +119,8 @@ class CategoryController extends Controller
             ], 400);
         }
  
+
+        
         $category = new Category;
         $category->name = $request->name;
         $category->group_id = $request->group_id;
@@ -145,7 +148,9 @@ class CategoryController extends Controller
                 'message' => 'あなたはこのグループに対する編集権限を持っていません。',
             ], 400);
         }
-    
+
+        Blog::where('category_id', $id)->delete();
+        Genre::where('category_id', $id)->delete();
         $category->delete();
 
         $parent_group = $this->getCurrent_group($category->group_id);

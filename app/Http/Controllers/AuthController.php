@@ -48,7 +48,7 @@ class AuthController extends Controller
         ];
 
         if(auth()->user()->status == '2' || auth()->user()->status == '3') {
-            return response()->json(['message' => 'あなたのアカウントはブロックされています'], 401);
+            return response()->json(['message' => 'あなたのアカウントは一時停止されました。'], 401);
         }
         $usertoken = JWT::encode($credentials, env("JWT_SECRET"), 'HS256');
         return $this->createNewToken($token, $usertoken);

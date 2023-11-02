@@ -44,12 +44,12 @@ Route::group([
 
         Route::get('user/index', [App\Http\Controllers\UserController::class, 'getUsers']);
         Route::get('user/groupusers', [App\Http\Controllers\UserController::class, 'getGroupUsers']);
-        Route::get('user/categories', [App\Http\Controllers\UserController::class, 'getCategoriesForUser']);
 
         Route::get('user/get/{id}', [App\Http\Controllers\UserController::class, 'getUserById']);
         Route::post('user/create', [App\Http\Controllers\UserController::class, 'addUser']);
         Route::post('user/update/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
         Route::post('user/delete/{id}', [App\Http\Controllers\UserController::class, 'deleteUser']);
+        Route::post('user/changestatus/{id}', [App\Http\Controllers\UserController::class, 'changeUserStatus']);
 
 
         // Route:

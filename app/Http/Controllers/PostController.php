@@ -408,14 +408,17 @@ class PostController extends Controller
         $title = $request->title;
         $content = $request->content;
 
+        $blogs = [];
+
         if(auth()->user()->role_id == 1) {
+
             $blogs = Blog::orderBy('created_at', 'desc')
             ->where('title', 'LIKE', '%' . $title . '%')
             ->where('content', 'LIKE', '%' . $content . '%')
             ->get();
         } else {
             $allowed_categories = $this->getAllowedCategories();
-            $blogs = Blog::where('category_id', $allowed_categories)->orderBy('created_at', 'desc')
+            $blogs = Blog::whereIn('category_id', $allowed_categories)->orderBy('created_at', 'desc')
             ->where('title', 'LIKE', '%' . $title . '%')
             ->where('content', 'LIKE', '%' . $content . '%')
             ->get();
