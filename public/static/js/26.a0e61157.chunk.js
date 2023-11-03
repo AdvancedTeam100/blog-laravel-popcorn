@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkreact_typescript_redux_mui_responsive=self.webpackChunkreact_typescript_redux_mui_responsive||[]).push([[26],{2026:function(e,r,t){t.r(r);var n=t(8870),i=t(890),s=t(184);r.default=function(){return(0,s.jsx)(n.Z,{sx:{flexGrow:1,backgroundColor:"inherit",display:"flex",justifyContent:"center",alignItems:"center"},children:(0,s.jsx)(i.Z,{variant:"h3",children:"About"})})}}}]);
+//# sourceMappingURL=26.a0e61157.chunk.js.map

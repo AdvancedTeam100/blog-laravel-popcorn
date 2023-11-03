@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkreact_typescript_redux_mui_responsive=self.webpackChunkreact_typescript_redux_mui_responsive||[]).push([[828],{9828:function(e,r,n){n.r(r);var t=n(8870),s=n(890),i=n(184);r.default=function(){return(0,i.jsx)(t.Z,{sx:{flexGrow:1,backgroundColor:"inherit",display:"flex",justifyContent:"center",alignItems:"center"},children:(0,i.jsx)(s.Z,{variant:"h3",children:"Change Password"})})}}}]);
+//# sourceMappingURL=828.57fc89a6.chunk.js.map
