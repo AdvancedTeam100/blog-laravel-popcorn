@@ -170,6 +170,7 @@ class AdminController extends Controller
 
         $leader['user_id'] = $request->user_id;
         $leader['parent_id'] = auth()->user()->id;
+        $leader['name'] = $request->name? : '';
         // $leader['password'] = bcrypt($request->password);
         $leader['read_name'] = $request->read_name ?: '';
         $leader['status'] = $request->status ?: '';

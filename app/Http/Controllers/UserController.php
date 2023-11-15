@@ -32,7 +32,7 @@ class UserController extends Controller
     {
         $users = User::where('group_id', auth()->user()->group_id)->get();
         return response()->json($users);
-    }
+    }   
 
     public function getUserById($id) 
     {
@@ -206,6 +206,8 @@ class UserController extends Controller
         
         $user['user_id'] = $request->user_id;
         $user['parent_id'] = auth()->user()->id;
+        $user['name'] = $request->name ?: '';
+
         // $user['password'] = bcrypt($request->password);
         $user['read_name'] = $request->read_name ?: '';
         $user['status'] = $request->status ?: '1';
