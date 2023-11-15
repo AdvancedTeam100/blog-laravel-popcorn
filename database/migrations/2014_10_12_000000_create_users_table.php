@@ -36,6 +36,9 @@ class CreateUsersTable extends Migration
             $table->json('view_groups')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('role_id')->nullable();
+            $table->string('google2fa_secret')->nullable();
+            $table->string('google_logged')->nullable();
+            $table->string('qr_codeurl')->nullable();
             $table->string('status');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();

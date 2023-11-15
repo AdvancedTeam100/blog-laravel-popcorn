@@ -38,6 +38,8 @@ class User extends Authenticatable implements JWTSubject
         'average_life',
         'group_id',
         'role_id',
+        'google2fa_secret',
+        'qr_codeurl',
         'allowed_categories',
         'avatar'
         ];
@@ -50,6 +52,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        
     ];
 
     /**

@@ -25,6 +25,8 @@ Route::group([
 ], function ($router) {
 
     Route::post('login', 'App\Http\Controllers\AuthController@login');
+    Route::post('loginotp', 'App\Http\Controllers\AuthController@loginOTP');
+
     Route::post('register', 'App\Http\Controllers\AuthController@register');
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
     Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');

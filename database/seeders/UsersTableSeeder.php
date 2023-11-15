@@ -45,6 +45,8 @@ class UsersTableSeeder extends Seeder
             'status' => '1', 
             'group_id' => '0',
             'role_id' => 1, // Assign the appropriate role ID
+            'google2fa_secret' => '',
+            'qr_codeurl' => '',
             'email_verified_at' => now(),
         ]);
     }
