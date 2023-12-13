@@ -39,7 +39,7 @@ class AuthController extends Controller
         }
 
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['message' => 'メールアドレスかパスワードが間違っています。'], 401);
+            return response()->json(['message' => 'ユーザーIDまたはパスワードが間違っています。'], 401);
         }
 
         if (auth()->user()->status == '2' || auth()->user()->status == '3') {
@@ -120,7 +120,7 @@ class AuthController extends Controller
         $credentials = $request->only('user_id', 'password');
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['message' => 'メールアドレスかパスワードが間違っています。'], 401);
+            return response()->json(['message' => 'ユーザーIDまたはパスワードが間違っています。'], 401);
         }
     
         $user = Auth::user();

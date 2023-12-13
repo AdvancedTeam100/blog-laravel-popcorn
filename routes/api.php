@@ -52,6 +52,7 @@ Route::group([
         Route::post('user/update/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
         Route::post('user/delete/{id}', [App\Http\Controllers\UserController::class, 'deleteUser']);
         Route::post('user/changestatus/{id}', [App\Http\Controllers\UserController::class, 'changeUserStatus']);
+        Route::post('user/changepassword', [App\Http\Controllers\UserController::class, 'changepassword']);
 
 
         // Route:

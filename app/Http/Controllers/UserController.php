@@ -270,6 +270,33 @@ class UserController extends Controller
     }
 
 
+    public function changePassword (Request $request) {
+        $user_id = $request->user_id;
+        $newPassword = $request->newPassword;
+
+        $user = User::find($user_id);
+        if (!$user) 
+        {
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
+        }
+
+        if(auth()->user()->role_id != 1 && auth()->user()->group_id != $user->group_id) 
+        {
+            return response()->json([
+                'message' => "このユーザーはあなたのグループに属していません。"
+            ], 400);
+        }
+
+        $user['password'] = bcrypt($newPassword);
+        $user->update();
+
+        return response()->json([
+            'message' => 'パスワードが正常に変更されました。',
+        ], 201);
+        
+    }
+
+
     public function getAllGroups () {
         $groups = Group::all();
         return response()->json($groups);

@@ -185,11 +185,25 @@ class AdminController extends Controller
         $leader['average_life'] = $request->average_life ?: '0';
         $leader['allowed_categories'] = $request->allowed_categories ?: '';
 
+        
+
+    
         if($avatarFileName != '') {
             $leader['avatar'] = $avatarFileName;
         }
-        // $leader->update($updatedData);
+
         $leader->update();
+        $group = Group::find($leader['group_id']);
+
+        if (!$group) {
+            return response()->json(['message' => 'グループリーダーが存在しない'], 404);
+        }
+
+        if($request->name) {
+            $group['name'] = $request->name;
+            $group->update();
+        }
+
 
         return response()->json([
             'message' => 'チームリーダーが正常に更新されました'
